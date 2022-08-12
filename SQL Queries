@@ -1,0 +1,63 @@
+select * from PortfolioProject.dbo.tbl_Dataset1
+
+select * from PortfolioProject.dbo.tbl_Dataset2
+
+--Total number of rows into dataset
+
+select count(*) from PortfolioProject..tbl_Dataset1
+
+select count(*) from PortfolioProject..tbl_Dataset2
+
+--Dataset for Jharkhand and Bihar
+
+select * from PortfolioProject..tbl_Dataset1 where state in ('Jharkhand','Bihar')
+
+--Total Population of India
+
+select sum(Population) as Total_Population from PortfolioProject..tbl_Dataset2 
+
+--Average Growth
+Select AVG(Growth)*100 as Average_Growth from PortfolioProject..tbl_Dataset1
+
+--Average Growth of States
+Select state, AVG(Growth)*100 as Average_Growth from PortfolioProject..tbl_Dataset1 group by State
+
+--Average Sex_Ratio of states in decending order
+Select state, Round(AVG(Sex_Ratio),0) as Average_Sex_Ratio from PortfolioProject..tbl_Dataset1 group by State order by Average_Sex_Ratio desc
+
+--Average Literacy rate
+Select State, Round(AVG(Literacy),0) as Average_Literacy from PortfolioProject..tbl_Dataset1
+group by State having Round(AVG(Literacy),0)>90 order by Average_Literacy desc
+
+--Top 3 states showing highest growth ratio
+Select top 3 state, AVG(Growth)*100 as Average_Growth from PortfolioProject..tbl_Dataset1 group by State order by Average_Growth desc
+
+--Top 3 states showing lowest sex ratio
+Select top 3 state, Round(AVG(Sex_Ratio),0) as Average_Sex_Ratio from PortfolioProject..tbl_Dataset1 group by State order by Average_Sex_Ratio asc
+
+--Top and lowest 3 states in the lietracy rates
+drop table if exists #Top3LiterateStates
+Create table #Top3LiterateStates
+( state nvarchar(255),
+top3states float
+
+)	
+insert into #Top3LiterateStates
+select top 3 state, ROUND(AVG(Literacy),0) as Avg_Literacy from tbl_Dataset1 group by state order by Avg_Literacy desc
+Select * from #Top3LiterateStates
+
+drop table if exists #Lowest3LiterateStates
+Create table #Lowest3LiterateStates
+( state nvarchar(255),
+lowest3states float
+
+)	
+insert into #Lowest3LiterateStates
+select top 3 state, ROUND(AVG(Literacy),0) as Avg_Literacy from tbl_Dataset1 group by state order by Avg_Literacy asc
+Select * from #Lowest3LiterateStates
+
+--Union operator
+Select state,top3states from #Top3LiterateStates Union Select state,lowest3states from #Lowest3LiterateStates
+
+--States starting with the letter 'A'
+Select distinct(state) from tbl_Dataset1 where state like 'A%' or state like 'B%'
